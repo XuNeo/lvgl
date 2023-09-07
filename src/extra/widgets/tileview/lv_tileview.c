@@ -29,15 +29,33 @@ static void tileview_event_cb(lv_event_t * e);
  *  STATIC VARIABLES
  **********************/
 
-const lv_obj_class_t lv_tileview_class = {.constructor_cb = lv_tileview_constructor,
-                                          .base_class = &lv_obj_class,
-                                          .instance_size = sizeof(lv_tileview_t)
-                                         };
+#if LV_USE_OBJID_BUILTIN
+static uint32_t obj_count = 0;
+static uint32_t obj_count_tile = 0;
+#endif
+const lv_obj_class_t lv_tileview_class = {
+    .constructor_cb = lv_tileview_constructor,
+    .base_class = &lv_obj_class,
+    .instance_size = sizeof(lv_tileview_t),
+#if LV_USE_OBJID_BUILTIN
+    .obj_count = &obj_count,
+#endif
+#if LV_USE_CLASS_NAME
+    .name = "tileview",
+#endif
+};
 
-const lv_obj_class_t lv_tileview_tile_class = {.constructor_cb = lv_tileview_tile_constructor,
-                                               .base_class = &lv_obj_class,
-                                               .instance_size = sizeof(lv_tileview_tile_t)
-                                              };
+const lv_obj_class_t lv_tileview_tile_class = {
+    .constructor_cb = lv_tileview_tile_constructor,
+    .base_class = &lv_obj_class,
+    .instance_size = sizeof(lv_tileview_tile_t),
+#if LV_USE_OBJID_BUILTIN
+    .obj_count = &obj_count_tile,
+#endif
+#if LV_USE_CLASS_NAME
+    .name = "tile",
+#endif
+};
 
 static lv_dir_t create_dir;
 static uint32_t create_col_id;

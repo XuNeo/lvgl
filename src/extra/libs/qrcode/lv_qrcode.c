@@ -30,10 +30,20 @@ static void lv_qrcode_destructor(const lv_obj_class_t * class_p, lv_obj_t * obj)
  *  STATIC VARIABLES
  **********************/
 
+#if LV_USE_OBJID_BUILTIN
+static uint32_t obj_count = 0;
+#endif
+
 const lv_obj_class_t lv_qrcode_class = {
     .constructor_cb = lv_qrcode_constructor,
     .destructor_cb = lv_qrcode_destructor,
-    .base_class = &lv_canvas_class
+    .base_class = &lv_canvas_class,
+#if LV_USE_OBJID_BUILTIN
+    .obj_count = &obj_count,
+#endif
+#if LV_USE_CLASS_NAME
+    .name = "qrcode",
+#endif
 };
 
 static lv_coord_t size_param;

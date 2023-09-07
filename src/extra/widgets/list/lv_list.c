@@ -27,18 +27,42 @@
  *  STATIC PROTOTYPES
  **********************/
 
+#if LV_USE_OBJID_BUILTIN
+static uint32_t obj_count_list = 0;
+static uint32_t obj_count_btn = 0;
+static uint32_t obj_count_text = 0;
+#endif
+
 const lv_obj_class_t lv_list_class = {
     .base_class = &lv_obj_class,
     .width_def = (LV_DPI_DEF * 3) / 2,
-    .height_def = LV_DPI_DEF * 2
+    .height_def = LV_DPI_DEF * 2,
+#if LV_USE_OBJID_BUILTIN
+    .obj_count = &obj_count_list,
+#endif
+#if LV_USE_CLASS_NAME
+    .name = "list",
+#endif
 };
 
 const lv_obj_class_t lv_list_btn_class = {
     .base_class = &lv_btn_class,
+#if LV_USE_OBJID_BUILTIN
+    .obj_count = &obj_count_btn,
+#endif
+#if LV_USE_CLASS_NAME
+    .name = "list-btn",
+#endif
 };
 
 const lv_obj_class_t lv_list_text_class = {
     .base_class = &lv_label_class,
+#if LV_USE_OBJID_BUILTIN
+    .obj_count = &obj_count_text,
+#endif
+#if LV_USE_CLASS_NAME
+    .name = "list-text",
+#endif
 };
 
 /**********************

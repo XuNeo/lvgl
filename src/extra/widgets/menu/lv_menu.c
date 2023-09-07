@@ -35,13 +35,27 @@ static void lv_menu_page_destructor(const lv_obj_class_t * class_p, lv_obj_t * o
 static void lv_menu_cont_constructor(const lv_obj_class_t * class_p, lv_obj_t * obj);
 static void lv_menu_section_constructor(const lv_obj_class_t * class_p, lv_obj_t * obj);
 
+#if LV_USE_OBJID_BUILTIN
+static uint32_t obj_count_menu = 0;
+static uint32_t obj_count_page = 0;
+static uint32_t obj_count_cont = 0;
+static uint32_t obj_section = 0;
+static uint32_t obj_separator = 0;
+#endif
+
 const lv_obj_class_t lv_menu_class = {
     .constructor_cb = lv_menu_constructor,
     .destructor_cb = lv_menu_destructor,
     .base_class = &lv_obj_class,
     .width_def = (LV_DPI_DEF * 3) / 2,
     .height_def = LV_DPI_DEF * 2,
-    .instance_size = sizeof(lv_menu_t)
+    .instance_size = sizeof(lv_menu_t),
+#if LV_USE_OBJID_BUILTIN
+    .obj_count = &obj_count_menu,
+#endif
+#if LV_USE_CLASS_NAME
+    .name = "menu",
+#endif
 };
 const lv_obj_class_t lv_menu_page_class = {
     .constructor_cb = lv_menu_page_constructor,
@@ -49,43 +63,67 @@ const lv_obj_class_t lv_menu_page_class = {
     .base_class = &lv_obj_class,
     .width_def = LV_PCT(100),
     .height_def = LV_SIZE_CONTENT,
-    .instance_size = sizeof(lv_menu_page_t)
+    .instance_size = sizeof(lv_menu_page_t),
+#if LV_USE_OBJID_BUILTIN
+    .obj_count = &obj_count_page,
+#endif
+#if LV_USE_CLASS_NAME
+    .name = "menu-page",
+#endif
 };
 
 const lv_obj_class_t lv_menu_cont_class = {
     .constructor_cb = lv_menu_cont_constructor,
     .base_class = &lv_obj_class,
     .width_def = LV_PCT(100),
-    .height_def = LV_SIZE_CONTENT
+    .height_def = LV_SIZE_CONTENT,
+#if LV_USE_OBJID_BUILTIN
+    .obj_count = &obj_count_cont,
+#endif
+#if LV_USE_CLASS_NAME
+    .name = "menu-cont",
+#endif
 };
 
 const lv_obj_class_t lv_menu_section_class = {
     .constructor_cb = lv_menu_section_constructor,
     .base_class = &lv_obj_class,
     .width_def = LV_PCT(100),
-    .height_def = LV_SIZE_CONTENT
+    .height_def = LV_SIZE_CONTENT,
+#if LV_USE_OBJID_BUILTIN
+    .obj_count = &obj_section,
+#endif
+#if LV_USE_CLASS_NAME
+    .name = "menu-section",
+#endif
 };
 
 const lv_obj_class_t lv_menu_separator_class = {
     .base_class = &lv_obj_class,
     .width_def = LV_SIZE_CONTENT,
-    .height_def = LV_SIZE_CONTENT
+    .height_def = LV_SIZE_CONTENT,
+#if LV_USE_OBJID_BUILTIN
+    .obj_count = &obj_separator,
+#endif
+#if LV_USE_CLASS_NAME
+    .name = "menu-separator",
+#endif
 };
 
 const lv_obj_class_t lv_menu_sidebar_cont_class = {
-    .base_class = &lv_obj_class
+    .base_class = &lv_obj_class,
 };
 
 const lv_obj_class_t lv_menu_main_cont_class = {
-    .base_class = &lv_obj_class
+    .base_class = &lv_obj_class,
 };
 
 const lv_obj_class_t lv_menu_main_header_cont_class = {
-    .base_class = &lv_obj_class
+    .base_class = &lv_obj_class,
 };
 
 const lv_obj_class_t lv_menu_sidebar_header_cont_class = {
-    .base_class = &lv_obj_class
+    .base_class = &lv_obj_class,
 };
 
 static void lv_menu_refr(lv_obj_t * obj);

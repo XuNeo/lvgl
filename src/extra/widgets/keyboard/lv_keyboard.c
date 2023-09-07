@@ -37,13 +37,23 @@ static void lv_keyboard_update_ctrl_map(lv_obj_t * obj);
 /**********************
  *  STATIC VARIABLES
  **********************/
+#if LV_USE_OBJID_BUILTIN
+static uint32_t obj_count = 0;
+#endif
+
 const lv_obj_class_t lv_keyboard_class = {
     .constructor_cb = lv_keyboard_constructor,
     .width_def = LV_PCT(100),
     .height_def = LV_PCT(50),
     .instance_size = sizeof(lv_keyboard_t),
     .editable = 1,
-    .base_class = &lv_btnmatrix_class
+    .base_class = &lv_btnmatrix_class,
+#if LV_USE_OBJID_BUILTIN
+    .obj_count = &obj_count,
+#endif
+#if LV_USE_CLASS_NAME
+    .name = "keyboard",
+#endif
 };
 
 static const char * const default_kb_map_lc[] = {"1#", "q", "w", "e", "r", "t", "y", "u", "i", "o", "p", LV_SYMBOL_BACKSPACE, "\n",

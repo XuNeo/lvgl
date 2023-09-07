@@ -40,13 +40,22 @@ static bool is_slider_horizontal(lv_obj_t * obj);
 /**********************
  *  STATIC VARIABLES
  **********************/
+#if LV_USE_OBJID_BUILTIN
+static uint32_t obj_count = 0;
+#endif
 const lv_obj_class_t lv_slider_class = {
     .constructor_cb = lv_slider_constructor,
     .event_cb = lv_slider_event,
     .editable = LV_OBJ_CLASS_EDITABLE_TRUE,
     .group_def = LV_OBJ_CLASS_GROUP_DEF_TRUE,
     .instance_size = sizeof(lv_slider_t),
-    .base_class = &lv_bar_class
+    .base_class = &lv_bar_class,
+#if LV_USE_OBJID_BUILTIN
+    .obj_count = &obj_count,
+#endif
+#if LV_USE_CLASS_NAME
+    .name = "slider",
+#endif
 };
 
 /**********************

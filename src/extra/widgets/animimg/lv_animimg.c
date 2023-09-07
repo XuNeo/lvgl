@@ -42,10 +42,20 @@ static void lv_animimg_constructor(const lv_obj_class_t * class_p, lv_obj_t * ob
 /**********************
  *  STATIC VARIABLES
  **********************/
+#if LV_USE_OBJID_BUILTIN
+static uint32_t obj_count = 0;
+#endif
+
 const lv_obj_class_t lv_animimg_class = {
     .constructor_cb = lv_animimg_constructor,
     .instance_size = sizeof(lv_animimg_t),
-    .base_class = &lv_img_class
+    .base_class = &lv_img_class,
+#if LV_USE_OBJID_BUILTIN
+    .obj_count = &obj_count,
+#endif
+#if LV_USE_CLASS_NAME
+    .name = "animimg",
+#endif
 };
 
 /**********************

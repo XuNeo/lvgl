@@ -848,6 +848,41 @@
     #endif
 #endif
 
+#ifndef LV_USE_CLASS_NAME
+    #ifdef _LV_KCONFIG_PRESENT
+        #ifdef CONFIG_LV_USE_CLASS_NAME
+            #define LV_USE_CLASS_NAME CONFIG_LV_USE_CLASS_NAME
+        #else
+            #define LV_USE_CLASS_NAME 1
+        #endif
+    #else
+        #define LV_USE_CLASS_NAME 1
+    #endif
+#endif
+
+#ifndef LV_USE_OBJID
+    #ifdef _LV_KCONFIG_PRESENT
+        #ifdef CONFIG_LV_USE_OBJID
+            #define LV_USE_OBJID CONFIG_LV_USE_OBJID
+        #else
+            #define LV_USE_OBJID 1
+        #endif
+    #else
+        #define LV_USE_OBJID 1
+    #endif
+#endif
+
+#if LV_USE_OBJID
+/*1: use custom malloc/free for draw buffer, 0: use the built-in `lv_mem_alloc()` and `lv_mem_free()`*/
+#ifndef LV_USE_OBJID_BUILTIN
+    #ifdef CONFIG_LV_USE_OBJID_BUILTIN
+        #define LV_USE_OBJID_BUILTIN CONFIG_LV_USE_OBJID_BUILTIN
+    #else
+        #define LV_USE_OBJID_BUILTIN 1
+    #endif
+#endif
+#endif
+
 /*Garbage Collector settings
  *Used if lvgl is bound to higher level language and the memory is managed by that language*/
 #ifndef LV_ENABLE_GC

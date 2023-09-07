@@ -58,6 +58,9 @@ static bool has_popovers_in_top_row(lv_obj_t * obj);
  **********************/
 static const char * lv_btnmatrix_def_map[] = {"Btn1", "Btn2", "Btn3", "\n", "Btn4", "Btn5", ""};
 
+#if LV_USE_OBJID_BUILTIN
+static uint32_t obj_count = 0;
+#endif
 const lv_obj_class_t lv_btnmatrix_class = {
     .constructor_cb = lv_btnmatrix_constructor,
     .destructor_cb = lv_btnmatrix_destructor,
@@ -67,7 +70,13 @@ const lv_obj_class_t lv_btnmatrix_class = {
     .instance_size = sizeof(lv_btnmatrix_t),
     .editable = LV_OBJ_CLASS_EDITABLE_TRUE,
     .group_def = LV_OBJ_CLASS_GROUP_DEF_TRUE,
-    .base_class = &lv_obj_class
+    .base_class = &lv_obj_class,
+#if LV_USE_OBJID_BUILTIN
+    .obj_count = &obj_count,
+#endif
+#if LV_USE_CLASS_NAME
+    .name = "btnmatrix",
+#endif
 };
 
 /**********************

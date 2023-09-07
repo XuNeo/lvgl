@@ -31,13 +31,22 @@ static void lv_spinbox_updatevalue(lv_obj_t * obj);
 /**********************
  *  STATIC VARIABLES
  **********************/
+#if LV_USE_OBJID_BUILTIN
+static uint32_t obj_count = 0;
+#endif
 const lv_obj_class_t lv_spinbox_class = {
     .constructor_cb = lv_spinbox_constructor,
     .event_cb = lv_spinbox_event,
     .width_def = LV_DPI_DEF,
     .instance_size = sizeof(lv_spinbox_t),
     .editable = LV_OBJ_CLASS_EDITABLE_TRUE,
-    .base_class = &lv_textarea_class
+    .base_class = &lv_textarea_class,
+#if LV_USE_OBJID_BUILTIN
+    .obj_count = &obj_count,
+#endif
+#if LV_USE_CLASS_NAME
+    .name = "spinbox",
+#endif
 };
 /**********************
  *      MACROS

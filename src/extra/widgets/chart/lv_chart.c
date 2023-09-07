@@ -46,6 +46,10 @@ lv_chart_tick_dsc_t * get_tick_gsc(lv_obj_t * obj, lv_chart_axis_t axis);
 /**********************
  *  STATIC VARIABLES
  **********************/
+#if LV_USE_OBJID_BUILTIN
+static uint32_t obj_count = 0;
+#endif
+
 const lv_obj_class_t lv_chart_class = {
     .constructor_cb = lv_chart_constructor,
     .destructor_cb = lv_chart_destructor,
@@ -53,7 +57,13 @@ const lv_obj_class_t lv_chart_class = {
     .width_def = LV_PCT(100),
     .height_def = LV_DPI_DEF * 2,
     .instance_size = sizeof(lv_chart_t),
-    .base_class = &lv_obj_class
+    .base_class = &lv_obj_class,
+#if LV_USE_OBJID_BUILTIN
+    .obj_count = &obj_count,
+#endif
+#if LV_USE_CLASS_NAME
+    .name = "chart",
+#endif
 };
 
 /**********************

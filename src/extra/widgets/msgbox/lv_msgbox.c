@@ -29,25 +29,49 @@ static void msgbox_close_click_event_cb(lv_event_t * e);
 /**********************
  *  STATIC VARIABLES
  **********************/
+#if LV_USE_OBJID_BUILTIN
+static uint32_t obj_count = 0;
+static uint32_t obj_count_content = 0;
+static uint32_t obj_count_backdrop = 0;
+#endif
+
 const lv_obj_class_t lv_msgbox_class = {
     .base_class = &lv_obj_class,
     .width_def = LV_DPI_DEF * 2,
     .height_def = LV_SIZE_CONTENT,
-    .instance_size = sizeof(lv_msgbox_t)
+    .instance_size = sizeof(lv_msgbox_t),
+#if LV_USE_OBJID_BUILTIN
+    .obj_count = &obj_count,
+#endif
+#if LV_USE_CLASS_NAME
+    .name = "msgbox",
+#endif
 };
 
 const lv_obj_class_t lv_msgbox_content_class = {
     .base_class = &lv_obj_class,
     .width_def = LV_PCT(100),
     .height_def = LV_SIZE_CONTENT,
-    .instance_size = sizeof(lv_obj_t)
+    .instance_size = sizeof(lv_obj_t),
+#if LV_USE_OBJID_BUILTIN
+    .obj_count = &obj_count_content,
+#endif
+#if LV_USE_CLASS_NAME
+    .name = "msgbox-content",
+#endif
 };
 
 const lv_obj_class_t lv_msgbox_backdrop_class = {
     .base_class = &lv_obj_class,
     .width_def = LV_PCT(100),
     .height_def = LV_PCT(100),
-    .instance_size = sizeof(lv_obj_t)
+    .instance_size = sizeof(lv_obj_t),
+#if LV_USE_OBJID_BUILTIN
+    .obj_count = &obj_count_backdrop,
+#endif
+#if LV_USE_CLASS_NAME
+    .name = "msgbox-backdrop",
+#endif
 };
 
 /**********************

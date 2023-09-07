@@ -34,6 +34,9 @@ static void lv_checkbox_draw(lv_event_t * e);
 /**********************
  *  STATIC VARIABLES
  **********************/
+#if LV_USE_OBJID_BUILTIN
+static uint32_t obj_count = 0;
+#endif
 const lv_obj_class_t lv_checkbox_class = {
     .constructor_cb = lv_checkbox_constructor,
     .destructor_cb = lv_checkbox_destructor,
@@ -42,7 +45,13 @@ const lv_obj_class_t lv_checkbox_class = {
     .height_def = LV_SIZE_CONTENT,
     .group_def = LV_OBJ_CLASS_GROUP_DEF_TRUE,
     .instance_size = sizeof(lv_checkbox_t),
-    .base_class = &lv_obj_class
+    .base_class = &lv_obj_class,
+#if LV_USE_OBJID_BUILTIN
+    .obj_count = &obj_count,
+#endif
+#if LV_USE_CLASS_NAME
+    .name = "checkbox",
+#endif
 };
 
 /**********************

@@ -27,9 +27,18 @@ static void arc_anim_end_angle(void * obj, int32_t v);
 /**********************
  *  STATIC VARIABLES
  **********************/
+#if LV_USE_OBJID_BUILTIN
+static uint32_t obj_count = 0;
+#endif
 const lv_obj_class_t lv_spinner_class = {
     .base_class = &lv_arc_class,
-    .constructor_cb = lv_spinner_constructor
+    .constructor_cb = lv_spinner_constructor,
+#if LV_USE_OBJID_BUILTIN
+    .obj_count = &obj_count,
+#endif
+#if LV_USE_CLASS_NAME
+    .name = "spinner",
+#endif
 };
 
 static uint32_t time_param;

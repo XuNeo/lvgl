@@ -51,13 +51,25 @@ static uint16_t get_angle(lv_obj_t * obj);
 /**********************
  *  STATIC VARIABLES
  **********************/
-const lv_obj_class_t lv_colorwheel_class = {.instance_size = sizeof(lv_colorwheel_t), .base_class = &lv_obj_class,
-                                            .constructor_cb = lv_colorwheel_constructor,
-                                            .event_cb = lv_colorwheel_event,
-                                            .width_def = LV_DPI_DEF * 2,
-                                            .height_def = LV_DPI_DEF * 2,
-                                            .editable = LV_OBJ_CLASS_EDITABLE_TRUE,
-                                           };
+#if LV_USE_OBJID_BUILTIN
+static uint32_t obj_count = 0;
+#endif
+
+const lv_obj_class_t lv_colorwheel_class = {
+    .instance_size = sizeof(lv_colorwheel_t),
+    .base_class = &lv_obj_class,
+    .constructor_cb = lv_colorwheel_constructor,
+    .event_cb = lv_colorwheel_event,
+    .width_def = LV_DPI_DEF * 2,
+    .height_def = LV_DPI_DEF * 2,
+    .editable = LV_OBJ_CLASS_EDITABLE_TRUE,
+#if LV_USE_OBJID_BUILTIN
+    .obj_count = &obj_count,
+#endif
+#if LV_USE_CLASS_NAME
+    .name = "colorwheel",
+#endif
+};
 
 static bool create_knob_recolor;
 

@@ -32,11 +32,21 @@ static void value_changed_event_cb(lv_event_t * e);
 /**********************
  *  STATIC VARIABLES
  **********************/
+#if LV_USE_OBJID_BUILTIN
+static uint32_t obj_count = 0;
+#endif
+
 const lv_obj_class_t lv_calendar_header_dropdown_class = {
     .base_class = &lv_obj_class,
     .width_def = LV_PCT(100),
     .height_def = LV_SIZE_CONTENT,
-    .constructor_cb = my_constructor
+    .constructor_cb = my_constructor,
+#if LV_USE_OBJID_BUILTIN
+    .obj_count = &obj_count,
+#endif
+#if LV_USE_CLASS_NAME
+    .name = "calendar-header-dropdown",
+#endif
 };
 
 static const char * month_list = "01\n02\n03\n04\n05\n06\n07\n08\n09\n10\n11\n12";

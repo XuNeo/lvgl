@@ -53,6 +53,15 @@ typedef struct _lv_obj_class_t {
 #if LV_USE_USER_DATA
     void * user_data;
 #endif
+
+#if LV_USE_CLASS_NAME
+    const char * name;
+#endif
+
+#if LV_USE_OBJID_BUILTIN
+    uint32_t * obj_count; /* Points to a static variable for logging object counts */
+#endif
+
     void (*event_cb)(const struct _lv_obj_class_t * class_p,
                      struct _lv_event_t * e);  /**< Widget type specific event function*/
     lv_coord_t width_def;

@@ -32,6 +32,9 @@ static void cont_scroll_end_event_cb(lv_event_t * e);
 /**********************
  *  STATIC VARIABLES
  **********************/
+#if LV_USE_OBJID_BUILTIN
+static uint32_t obj_count = 0;
+#endif
 const lv_obj_class_t lv_tabview_class = {
     .constructor_cb = lv_tabview_constructor,
     .destructor_cb = lv_tabview_destructor,
@@ -39,7 +42,13 @@ const lv_obj_class_t lv_tabview_class = {
     .width_def = LV_PCT(100),
     .height_def = LV_PCT(100),
     .base_class = &lv_obj_class,
-    .instance_size = sizeof(lv_tabview_t)
+    .instance_size = sizeof(lv_tabview_t),
+#if LV_USE_OBJID_BUILTIN
+    .obj_count = &obj_count,
+#endif
+#if LV_USE_CLASS_NAME
+    .name = "tabview",
+#endif
 };
 
 static lv_dir_t tabpos_create;

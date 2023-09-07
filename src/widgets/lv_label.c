@@ -52,6 +52,9 @@ static void set_ofs_y_anim(void * obj, int32_t v);
 /**********************
  *  STATIC VARIABLES
  **********************/
+#if LV_USE_OBJID_BUILTIN
+static uint32_t obj_count = 0;
+#endif
 const lv_obj_class_t lv_label_class = {
     .constructor_cb = lv_label_constructor,
     .destructor_cb = lv_label_destructor,
@@ -59,7 +62,13 @@ const lv_obj_class_t lv_label_class = {
     .width_def = LV_SIZE_CONTENT,
     .height_def = LV_SIZE_CONTENT,
     .instance_size = sizeof(lv_label_t),
-    .base_class = &lv_obj_class
+    .base_class = &lv_obj_class,
+#if LV_USE_OBJID_BUILTIN
+    .obj_count = &obj_count,
+#endif
+#if LV_USE_CLASS_NAME
+    .name = "label",
+#endif
 };
 
 /**********************

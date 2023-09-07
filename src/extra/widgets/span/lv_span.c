@@ -67,6 +67,9 @@ static lv_coord_t convert_indent_pct(lv_obj_t * spans, lv_coord_t width);
  *  STATIC VARIABLES
  **********************/
 static struct _snippet_stack snippet_stack;
+#if LV_USE_OBJID_BUILTIN
+static uint32_t obj_count = 0;
+#endif
 
 const lv_obj_class_t lv_spangroup_class  = {
     .base_class = &lv_obj_class,
@@ -76,6 +79,12 @@ const lv_obj_class_t lv_spangroup_class  = {
     .instance_size = sizeof(lv_spangroup_t),
     .width_def = LV_SIZE_CONTENT,
     .height_def = LV_SIZE_CONTENT,
+#if LV_USE_OBJID_BUILTIN
+    .obj_count = &obj_count,
+#endif
+#if LV_USE_CLASS_NAME
+    .name = "span",
+#endif
 };
 
 /**********************

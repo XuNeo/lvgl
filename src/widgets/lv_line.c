@@ -34,13 +34,22 @@ static void lv_line_event(const lv_obj_class_t * class_p, lv_event_t * e);
 /**********************
  *  STATIC VARIABLES
  **********************/
+#if LV_USE_OBJID_BUILTIN
+static uint32_t obj_count = 0;
+#endif
 const lv_obj_class_t lv_line_class = {
     .constructor_cb = lv_line_constructor,
     .event_cb = lv_line_event,
     .width_def = LV_SIZE_CONTENT,
     .height_def = LV_SIZE_CONTENT,
     .instance_size = sizeof(lv_line_t),
-    .base_class = &lv_obj_class
+    .base_class = &lv_obj_class,
+#if LV_USE_OBJID_BUILTIN
+    .obj_count = &obj_count,
+#endif
+#if LV_USE_CLASS_NAME
+    .name = "line",
+#endif
 };
 
 /**********************

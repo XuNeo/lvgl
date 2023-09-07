@@ -36,11 +36,20 @@ static void deinit_fake_disp(lv_obj_t * canvas, lv_disp_t * disp);
 /**********************
  *  STATIC VARIABLES
  **********************/
+#if LV_USE_OBJID_BUILTIN
+static uint32_t obj_count = 0;
+#endif
 const lv_obj_class_t lv_canvas_class = {
     .constructor_cb = lv_canvas_constructor,
     .destructor_cb = lv_canvas_destructor,
     .instance_size = sizeof(lv_canvas_t),
-    .base_class = &lv_img_class
+    .base_class = &lv_img_class,
+#if LV_USE_OBJID_BUILTIN
+    .obj_count = &obj_count,
+#endif
+#if LV_USE_CLASS_NAME
+    .name = "canvas",
+#endif
 };
 
 /**********************

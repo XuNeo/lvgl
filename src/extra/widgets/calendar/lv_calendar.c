@@ -38,13 +38,23 @@ static void highlight_update(lv_obj_t * calendar);
 /**********************
  *  STATIC VARIABLES
  **********************/
+#if LV_USE_OBJID_BUILTIN
+static uint32_t obj_count = 0;
+#endif
+
 const lv_obj_class_t lv_calendar_class = {
     .constructor_cb = lv_calendar_constructor,
     .width_def = (LV_DPI_DEF * 3) / 2,
     .height_def = (LV_DPI_DEF * 3) / 2,
     .group_def = LV_OBJ_CLASS_GROUP_DEF_TRUE,
     .instance_size = sizeof(lv_calendar_t),
-    .base_class = &lv_obj_class
+    .base_class = &lv_obj_class,
+#if LV_USE_OBJID_BUILTIN
+    .obj_count = &obj_count,
+#endif
+#if LV_USE_CLASS_NAME
+    .name = "calendar",
+#endif
 };
 
 static const char * day_names_def[7] = LV_CALENDAR_DEFAULT_DAY_NAMES;

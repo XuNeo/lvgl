@@ -45,6 +45,10 @@ static void set_y_anim(void * obj, int32_t v);
 /**********************
  *  STATIC VARIABLES
  **********************/
+#if LV_USE_OBJID_BUILTIN
+static uint32_t obj_count_roller = 0;
+static uint32_t obj_count_label = 0;
+#endif
 const lv_obj_class_t lv_roller_class = {
     .constructor_cb = lv_roller_constructor,
     .event_cb = lv_roller_event,
@@ -53,13 +57,25 @@ const lv_obj_class_t lv_roller_class = {
     .instance_size = sizeof(lv_roller_t),
     .editable = LV_OBJ_CLASS_EDITABLE_TRUE,
     .group_def = LV_OBJ_CLASS_GROUP_DEF_TRUE,
-    .base_class = &lv_obj_class
+    .base_class = &lv_obj_class,
+#if LV_USE_OBJID_BUILTIN
+    .obj_count = &obj_count_roller,
+#endif
+#if LV_USE_CLASS_NAME
+    .name = "roller",
+#endif
 };
 
 const lv_obj_class_t lv_roller_label_class  = {
     .event_cb = lv_roller_label_event,
     .instance_size = sizeof(lv_label_t),
-    .base_class = &lv_label_class
+    .base_class = &lv_label_class,
+#if LV_USE_OBJID_BUILTIN
+    .obj_count = &obj_count_label,
+#endif
+#if LV_USE_CLASS_NAME
+    .name = "roller-label",
+#endif
 };
 
 /**********************

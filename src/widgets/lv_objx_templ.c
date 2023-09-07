@@ -38,6 +38,9 @@ static void lv_templ_event(const lv_obj_class_t * class_p, lv_event_t * e);
 /**********************
  *  STATIC VARIABLES
  **********************/
+#if LV_USE_OBJID_BUILTIN
+static uint32_t obj_count = 0;
+#endif
 const lv_obj_class_t lv_templ_class = {
     .constructor_cb = lv_templ_constructor,
     .destructor_cb = lv_templ_destructor,
@@ -47,7 +50,13 @@ const lv_obj_class_t lv_templ_class = {
     .instance_size = sizeof(lv_templ_t),
     .group_def = LV_OBJ_CLASS_GROUP_DEF_INHERIT,
     .editable = LV_OBJ_CLASS_EDITABLE_INHERIT,
-    .base_class = &lv_templ_class
+    .base_class = &lv_templ_class,
+#if LV_USE_OBJID_BUILTIN
+    .obj_count = &obj_count,
+#endif
+#if LV_USE_CLASS_NAME
+    .name = "templ",
+#endif
 };
 
 /**********************

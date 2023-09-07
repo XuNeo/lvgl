@@ -179,6 +179,11 @@ typedef struct _lv_obj_t {
 #if LV_USE_USER_DATA
     void * user_data;
 #endif
+
+#if LV_USE_OBJID
+    void * id;
+#endif
+
     lv_area_t coords;
     lv_obj_flag_t flags;
     lv_state_t state;
@@ -380,6 +385,26 @@ static inline lv_coord_t lv_obj_dpx(const lv_obj_t * obj, lv_coord_t n)
 {
     return _LV_DPX_CALC(lv_disp_get_dpi(lv_obj_get_disp(obj)), n);
 }
+
+/**
+ * Assign an id to an object if not previously assigned
+ * @param obj   pointer to an object
+ */
+void lv_obj_assign_id(lv_obj_t * obj);
+
+/**
+ * Free resources allocated by `lv_obj_assign_id`
+ * @param obj   pointer to an object
+ */
+void lv_obj_free_id(lv_obj_t *obj);
+
+/**
+ * Format an object's id into a string.
+ * @param obj   pointer to an object
+ * @param buf   buffer to write the string into
+ * @param len   length of the buffer
+ */
+const char* lv_obj_stringify_id(lv_obj_t * obj, char *buf, uint32_t len);
 
 /**********************
  *      MACROS

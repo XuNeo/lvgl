@@ -70,6 +70,10 @@ static void lv_obj_set_state(lv_obj_t * obj, lv_state_t new_state);
  *  STATIC VARIABLES
  **********************/
 static bool lv_initialized = false;
+#if LV_USE_OBJID_BUILTIN
+static uint32_t obj_count = 0;
+#endif
+
 const lv_obj_class_t lv_obj_class = {
     .constructor_cb = lv_obj_constructor,
     .destructor_cb = lv_obj_destructor,
@@ -80,6 +84,13 @@ const lv_obj_class_t lv_obj_class = {
     .group_def = LV_OBJ_CLASS_GROUP_DEF_FALSE,
     .instance_size = (sizeof(lv_obj_t)),
     .base_class = NULL,
+#if LV_USE_OBJID_BUILTIN
+    .obj_count = &obj_count,
+#endif
+
+#if LV_USE_CLASS_NAME
+    .name = "obj",
+#endif
 };
 
 /**********************
@@ -412,6 +423,13 @@ bool lv_obj_is_valid(const lv_obj_t * obj)
     return false;
 }
 
+void lv_obj_dump(const lv_obj_t * obj)
+{
+    if (obj == NULL) return;
+    lv_obj_tree_walk(obj, obj_dump_cb, NULL);
+
+}
+
 /**********************
  *   STATIC FUNCTIONS
  **********************/
@@ -443,6 +461,10 @@ static void lv_obj_constructor(const lv_obj_class_t * class_p, lv_obj_t * obj)
     obj->flags |= LV_OBJ_FLAG_SCROLL_MOMENTUM;
     obj->flags |= LV_OBJ_FLAG_SCROLL_WITH_ARROW;
     if(parent) obj->flags |= LV_OBJ_FLAG_GESTURE_BUBBLE;
+
+#if LV_USE_OBJID
+    lv_obj_assign_id(obj);
+#endif
 
     LV_TRACE_OBJ_CREATE("finished");
 }
@@ -478,6 +500,10 @@ static void lv_obj_destructor(const lv_obj_class_t * class_p, lv_obj_t * obj)
         lv_mem_free(obj->spec_attr);
         obj->spec_attr = NULL;
     }
+
+#if LV_USE_OBJID
+    lv_obj_free_id(obj);
+#endif
 }
 
 static void lv_obj_draw(lv_event_t * e)

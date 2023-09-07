@@ -33,11 +33,21 @@ lv_imgbtn_state_t get_state(const lv_obj_t * imgbtn);
 /**********************
  *  STATIC VARIABLES
  **********************/
+#if LV_USE_OBJID_BUILTIN
+static uint32_t obj_count = 0;
+#endif
+
 const lv_obj_class_t lv_imgbtn_class = {
     .base_class = &lv_obj_class,
     .instance_size = sizeof(lv_imgbtn_t),
     .constructor_cb = lv_imgbtn_constructor,
     .event_cb = lv_imgbtn_event,
+#if LV_USE_OBJID_BUILTIN
+    .obj_count = &obj_count,
+#endif
+#if LV_USE_CLASS_NAME
+    .name = "imgbtn",
+#endif
 };
 
 /**********************

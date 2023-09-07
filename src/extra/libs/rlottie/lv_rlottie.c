@@ -32,11 +32,21 @@ static void next_frame_task_cb(lv_timer_t * t);
 /**********************
  *  STATIC VARIABLES
  **********************/
+#if LV_USE_OBJID_BUILTIN
+static uint32_t obj_count = 0;
+#endif
+
 const lv_obj_class_t lv_rlottie_class = {
     .constructor_cb = lv_rlottie_constructor,
     .destructor_cb = lv_rlottie_destructor,
     .instance_size = sizeof(lv_rlottie_t),
-    .base_class = &lv_img_class
+    .base_class = &lv_img_class,
+#if LV_USE_OBJID_BUILTIN
+    .obj_count = &obj_count,
+#endif
+#if LV_USE_CLASS_NAME
+    .name = "rlottie",
+#endif
 };
 
 static lv_coord_t create_width;
