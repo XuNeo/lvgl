@@ -22,6 +22,7 @@ extern "C" {
 #include "../misc/lv_area.h"
 #include "../misc/lv_color.h"
 #include "../misc/lv_assert.h"
+#include "../misc/lv_obj_property.h"
 
 /*********************
  *      DEFINES

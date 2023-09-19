@@ -22,6 +22,7 @@
 #include <stdint.h>
 #include <string.h>
 
+#include "lv_obj_tree.h"
 /*********************
  *      DEFINES
  *********************/
@@ -49,6 +50,16 @@ static void lv_obj_set_state(lv_obj_t * obj, lv_state_t new_state);
 /**********************
  *  STATIC VARIABLES
  **********************/
+#if LV_USE_OBJ_PROPERTY
+static const lv_property_ops_t properties[] = {
+    {
+        .id = LV_PROPERTY_OBJ_PARENT,
+        .setter = lv_obj_set_parent,
+        .getter = lv_obj_get_parent,
+    },
+};
+#endif
+
 const lv_obj_class_t lv_obj_class = {
     .constructor_cb = lv_obj_constructor,
     .destructor_cb = lv_obj_destructor,
@@ -59,6 +70,12 @@ const lv_obj_class_t lv_obj_class = {
     .group_def = LV_OBJ_CLASS_GROUP_DEF_FALSE,
     .instance_size = (sizeof(lv_obj_t)),
     .base_class = NULL,
+#if LV_USE_OBJ_PROPERTY
+    .prop_index_start = LV_PROPERTY_OBJ_START,
+    .prop_index_end = LV_PROPERTY_OBJ_END,
+    .properties = properties,
+    .properties_count = sizeof(properties) / sizeof(properties[0]),
+#endif
 };
 
 /**********************

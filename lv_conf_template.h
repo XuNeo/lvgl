@@ -263,7 +263,10 @@
 
 
 /* Add 2 x 32 bit variables to each lv_obj_t to speed up getting style properties */
-#define  LV_OBJ_STYLE_CACHE 1
+#define LV_OBJ_STYLE_CACHE 1
+
+/*Use unified obj property set/get API*/
+#define LV_USE_OBJ_PROPERTY 1
 
 /*=====================
  *  COMPILER SETTINGS

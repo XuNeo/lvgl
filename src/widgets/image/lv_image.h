@@ -134,6 +134,14 @@ void lv_image_set_rotation(lv_obj_t * obj, int16_t angle);
  */
 void lv_image_set_pivot(lv_obj_t * obj, lv_coord_t x, lv_coord_t y);
 
+/**
+ * Set pivot similar to get_pivot
+ */
+static inline void _lv_image_set_pivot(lv_obj_t * obj, lv_point_t * pivot)
+{
+    lv_image_set_pivot(obj, pivot->x, pivot->y);
+}
+
 
 /**
  * Set the zoom factor of the image.

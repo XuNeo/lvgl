@@ -205,6 +205,8 @@ static inline void lv_obj_move_background(lv_obj_t * obj)
 #define lv_style_set_transform_zoom         lv_style_set_transform_scale
 #define LV_ZOOM_NONE             LV_SCALE_NONE
 
+#define lv_img_dsc_t lv_image_dsc_t
+
 /**********************
  *      MACROS
  **********************/

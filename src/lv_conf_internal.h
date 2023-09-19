@@ -731,7 +731,20 @@
             #define LV_OBJ_STYLE_CACHE 0
         #endif
     #else
-        #define  LV_OBJ_STYLE_CACHE 1
+        #define LV_OBJ_STYLE_CACHE 1
+    #endif
+#endif
+
+/*Use unified obj property set/get API*/
+#ifndef LV_USE_OBJ_PROPERTY
+    #ifdef _LV_KCONFIG_PRESENT
+        #ifdef CONFIG_LV_USE_OBJ_PROPERTY
+            #define LV_USE_OBJ_PROPERTY CONFIG_LV_USE_OBJ_PROPERTY
+        #else
+            #define LV_USE_OBJ_PROPERTY 0
+        #endif
+    #else
+        #define LV_USE_OBJ_PROPERTY 1
     #endif
 #endif
 
