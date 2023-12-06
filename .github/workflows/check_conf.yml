@@ -1,4 +1,5 @@
 name: Verify that lv_conf_internal.h matches repository state
+
 on:
   push:
   pull_request:
@@ -6,7 +7,6 @@ on:
 jobs:
   verify-conf-internal:
     if: ${{ github.event_name != 'pull_request' || github.repository != github.event.pull_request.head.repo.full_name }}
-    runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v4

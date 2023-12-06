@@ -2,14 +2,14 @@ name: C/C++ CI
 
 on:
   push:
-    branches: [ master, release/v8.* ]
+    branches: [ master, ci, release/v8.* ]
   pull_request:
-    branches: [ master, release/v8.* ]
+    branches: [ master, ci, release/v8.* ]
 
 jobs:
   build:
     if: ${{ github.event_name != 'pull_request' || github.repository != github.event.pull_request.head.repo.full_name }}
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     strategy:
       matrix:
         # A valid option parameter to the cmake file.
@@ -27,7 +27,7 @@ jobs:
       run: python tests/main.py --build-option=${{ matrix.build_option }} build
 
   test-native:
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     name: amd64 Executable Tests
     steps:
     - uses: actions/checkout@v4
@@ -52,7 +52,7 @@ jobs:
         verbose: true
   test-cross:
     # The host should always be linux
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     name: ${{ matrix.arch }} Executable Tests
 
     # Run steps on a matrix of 3 arch/distro combinations
