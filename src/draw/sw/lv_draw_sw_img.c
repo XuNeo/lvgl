@@ -252,15 +252,34 @@ static void img_decode_and_draw(lv_draw_unit_t * draw_unit, const lv_draw_image_
     sup.palette = decoder_dsc->palette;
     sup.palette_size = decoder_dsc->palette_size;
 
-    /*The whole image is available, just draw it*/
-    if(decoder_dsc->decoded || decoder_dsc->img_data) {
-        img_draw_core(draw_unit, draw_dsc, decoder_dsc, &sup, img_area, clipped_img_area);
-    }
-    /*Draw in smaller pieces*/
-    else {
-        lv_area_t relative_full_area_to_decode = *clipped_img_area;
-        lv_area_move(&relative_full_area_to_decode, -img_area->x1, -img_area->y1);
+    const lv_draw_buf_t * decoded = decoder_dsc->decoded;
 
+    /*For backward compatibility, will be removed*/
+    if(decoder_dsc->img_data) {
+        img_draw_core(draw_unit, draw_dsc, decoder_dsc, &sup, img_area, clipped_img_area);
+        return;
+    }
+
+    lv_area_t relative_full_area_to_decode = *clipped_img_area;
+    lv_area_move(&relative_full_area_to_decode, -img_area->x1, -img_area->y1);
+
+    if(decoded) {
+        lv_area_t decoded_area = {
+            .x1 = 0,
+            .y1 = 0,
+            .x2 = decoded->header.w - 1,
+            .y2 = decoded->header.h - 1,
+        };
+
+        /*Decoded image can be used.*/
+        if(_lv_area_intersect(&decoded_area, &relative_full_area_to_decode, &decoded_area)) {
+            img_draw_core(draw_unit, draw_dsc, decoder_dsc, &sup, img_area, clipped_img_area);
+            return;
+        }
+    }
+
+    /*Draw in smaller pieces*/
+    {
         lv_area_t relative_decoded_area;
         relative_decoded_area.x1 = LV_COORD_MIN;
         relative_decoded_area.y1 = LV_COORD_MIN;

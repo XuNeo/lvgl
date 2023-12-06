@@ -388,7 +388,7 @@ lv_result_t lv_bin_decoder_get_area(lv_image_decoder_t * decoder, lv_image_decod
     int32_t w_px = lv_area_get_width(full_area);
     uint8_t * img_data = NULL;
     lv_draw_buf_t * decoded = NULL;
-    uint32_t offset = 0;
+    uint32_t offset = sizeof(lv_image_header_t); /*All image starts with image header*/
 
     /*We only support read line by line for now*/
     if(decoded_area->y1 == LV_COORD_MIN) {
@@ -432,7 +432,6 @@ lv_result_t lv_bin_decoder_get_area(lv_image_decoder_t * decoder, lv_image_decod
         offset += decoded_area->y1 * dsc->header.stride;
         offset += decoded_area->x1 * bpp / 8; /*Move to x1*/
         if(dsc->src_type == LV_IMAGE_SRC_FILE) {
-            offset += sizeof(lv_image_header_t); /*File image starts with image header*/
             buf = lv_malloc(len);
             LV_ASSERT_NULL(buf);
             if(buf == NULL)
@@ -445,6 +444,7 @@ lv_result_t lv_bin_decoder_get_area(lv_image_decoder_t * decoder, lv_image_decod
             }
         }
         else {
+            offset -= sizeof(lv_image_header_t);
             const lv_image_dsc_t * image = dsc->src;
             buf = (void *)(image->data + offset);
         }
