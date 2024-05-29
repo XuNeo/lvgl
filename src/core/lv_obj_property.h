@@ -79,8 +79,9 @@ typedef struct {
 typedef struct {
     lv_prop_id_t id;
 
-    void * setter;
-    void * getter;
+    void * setter;      /**< Callback used to set property. */
+    void * getter;      /**< Callback used to get property. */
+    const char * name;  /**< Property name, valid C identifiers only. */
 } lv_property_ops_t;
 
 /**********************
@@ -99,7 +100,7 @@ typedef struct {
  * @return          return LV_RESULT_OK if success
  */
 lv_result_t lv_obj_set_property(lv_obj_t * obj, const lv_property_t * value);
-
+lv_result_t lv_obj_set_property_by_name(lv_obj_t * obj, const char * name, const lv_property_t * value);
 lv_result_t lv_obj_set_properties(lv_obj_t * obj, const lv_property_t * value, uint32_t count);
 
 /*=====================

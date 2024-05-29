@@ -58,11 +58,13 @@ static const lv_property_ops_t properties[] = {
         .id = LV_PROPERTY_OBJ_PARENT,
         .setter = lv_obj_set_parent,
         .getter = lv_obj_get_parent,
+        .name = "parent",
     },
     {
         .id = LV_PROPERTY_ID_ANY,
         .setter = lv_obj_set_any,
         .getter = lv_obj_get_any,
+        .name = "*",
     }
 };
 #endif
