@@ -223,7 +223,7 @@ char * lv_strcpy(char * dst, const char * src)
     return tmp;
 }
 
-int32_t lv_strcmp(const char * s1, const char * s2)
+int lv_strcmp(const char * s1, const char * s2)
 {
     while(*s1 && (*s1 == *s2)) {
         s1++;

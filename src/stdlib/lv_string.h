@@ -117,7 +117,7 @@ char * lv_strcpy(char * dst, const char * src);
  * @param s2    pointer to the second string
  * @return      the difference between the value of the first unmatching character.
  */
-int32_t lv_strcmp(const char * s1, const char * s2);
+int lv_strcmp(const char * s1, const char * s2);
 
 /**
  * @brief Duplicate a string by allocating a new one and copying the content.
