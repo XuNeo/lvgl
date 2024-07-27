@@ -56,6 +56,16 @@ typedef _lv_keyboard_mode_t lv_keyboard_mode_t;
 typedef uint8_t lv_keyboard_mode_t;
 #endif /*DOXYGEN*/
 
+#if LV_USE_OBJ_PROPERTY
+enum {
+    LV_PROPERTY_ID(KEYBOARD, TEXTAREA,            LV_PROPERTY_TYPE_OBJ,   0),
+    LV_PROPERTY_ID(KEYBOARD, MODE,                LV_PROPERTY_TYPE_INT,   1),
+    LV_PROPERTY_ID(KEYBOARD, POPOVERS,            LV_PROPERTY_TYPE_INT,   2),
+    LV_PROPERTY_ID(KEYBOARD, SELECTED_BUTTON,     LV_PROPERTY_TYPE_INT,   3),
+    LV_PROPERTY_KEYBOARD_END,
+};
+#endif
+
 /*Data of keyboard*/
 typedef struct {
     lv_buttonmatrix_t btnm;
@@ -137,7 +147,7 @@ lv_keyboard_mode_t lv_keyboard_get_mode(const lv_obj_t * kb);
  * @param obj       pointer to a Keyboard object
  * @return          true: "popovers" mode is enabled; false: disabled
  */
-bool lv_buttonmatrix_get_popovers(const lv_obj_t * obj);
+bool lv_keyboard_get_popovers(const lv_obj_t * obj);
 
 /**
  * Get the current map of a keyboard
