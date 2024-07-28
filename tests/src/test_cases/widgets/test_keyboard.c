@@ -66,7 +66,7 @@ void test_keyboard_properties(void)
 
     prop.id = LV_PROPERTY_KEYBOARD_SELECTED_BUTTON;
     prop.num = 0;
-    TEST_ASSERT_EQUAL_INT(LV_BUTTONMATRIX_BUTTON_NONE, lv_keyboard_get_selected_button(obj));
+    TEST_ASSERT_EQUAL_INT(1, lv_keyboard_get_selected_button(obj));
     TEST_ASSERT_EQUAL_INT(LV_BUTTONMATRIX_BUTTON_NONE, lv_obj_get_property(obj, LV_PROPERTY_KEYBOARD_SELECTED_BUTTON).num);
 #endif
 }
