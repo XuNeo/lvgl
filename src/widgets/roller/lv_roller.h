@@ -44,6 +44,15 @@ typedef _lv_roller_mode_t lv_roller_mode_t;
 typedef uint8_t lv_roller_mode_t;
 #endif /*DOXYGEN*/
 
+#if LV_USE_OBJ_PROPERTY
+enum {
+    LV_PROPERTY_ID(ROLLER, OPTIONS,             LV_PROPERTY_TYPE_INT,    0),
+    LV_PROPERTY_ID(ROLLER, SELECTED,            LV_PROPERTY_TYPE_INT,    1),
+    LV_PROPERTY_ID(ROLLER, VISIBLE_ROW_COUNT,   LV_PROPERTY_TYPE_INT,    2),
+    LV_PROPERTY_ROLLER_END,
+};
+#endif
+
 typedef struct {
     lv_obj_t obj;
     uint32_t option_cnt;          /**< Number of options*/
