@@ -973,7 +973,7 @@ static uint32_t loop_optimizable(void)
 {
     /*Easy to optimize as only local variables change*/
     uint32_t i;
-    uint32_t c = 0;
+    volatile uint32_t c = 0;
     for(i = 0; i < 100000; i++) {
         c++;
     }
