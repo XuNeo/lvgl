@@ -207,7 +207,8 @@ if(NOT (CMAKE_C_COMPILER_ID STREQUAL "MSVC"))
         -Wno-unreachable-code
         -Wno-gnu-zero-variadic-macro-arguments
         -Wunused-function
-	-Wno-overlength-strings
+	    -Wno-overlength-strings
+        -Wno-format-pedantic
     )
 else()
     list(APPEND COMPILE_OPTIONS
@@ -374,6 +375,7 @@ if(NOT WIN32)
         include_directories("${LVGL_TEST_DIR}/wayland_protocols")
         target_sources(test_common PUBLIC "wayland_protocols/wayland_xdg_shell.c")
     else()
+        message("Wayland not found, defaulting to 0")
         add_definitions(-DLV_USE_WAYLAND=0)
     endif()
 endif()
@@ -385,13 +387,22 @@ include_directories(${PNG_INCLUDE_DIR})
 if(NOT WIN32)
     # FFmpeg is optional for the image and video test cases
     find_package(PkgConfig)
-    pkg_check_modules(FFMPEG libavformat libavcodec libswscale libavutil)
+    pkg_check_modules(FFMPEG REQUIRED IMPORTED_TARGET
+        libavformat
+        libavcodec
+        libswscale
+        libavutil
+    )
+
     if(FFMPEG_FOUND)
         include_directories(${FFMPEG_INCLUDE_DIRS})
+        message("Use ffmeg at ${FFMPEG_INCLUDE_DIRS}")
     else()
         message("FFmpeg not found, defaulting to 0")
         add_definitions(-DLV_USE_FFMPEG=0)
     endif()
+
+    message("FFmpeg components found status: ffmpeg: ${FFMPEG_FOUND} libavformat: ${libavformat_FOUND} libavcodec: ${libavcodec_FOUND} libswscale: ${libswscale_FOUND} ${libavutil_FOUND}")
 else()
     message("Disable FFmpeg for Windows")
     add_definitions(-DLV_USE_FFMPEG=0)
@@ -512,16 +523,15 @@ foreach( test_case_fname ${TEST_CASE_FILES} )
     )
     target_link_libraries(${test_name} PRIVATE
             test_common
-            lvgl_demos
             lvgl
-            lvgl_thorvg
             ${PNG_LIBRARIES}
             ${FREETYPE_LIBRARIES}
             ${LIBDRM_LIBRARIES}
             ${LIBINPUT_LIBRARIES}
             ${JPEG_LIBRARIES}
             ${WebP_LINK_LIBRARIES}
-            ${FFMPEG_LIBRARIES}
+            PkgConfig::FFMPEG
+            # ${FFMPEG_LIBRARIES}
             m
             pthread
             ${TEST_LIBS})
@@ -535,7 +545,7 @@ foreach( test_case_fname ${TEST_CASE_FILES} )
     	        ${OPENGL_LIBRARIES} ${GLEW_LIBRARIES} glfw)
 	endif()
 
-    target_include_directories(${test_name} PUBLIC ${TEST_INCLUDE_DIRS})
+    target_include_directories(${test_name} PUBLIC ${TEST_INCLUDE_DIRS} ${FFMPEG_LIBRARY_DIRS})
     target_compile_options(${test_name} PUBLIC ${LVGL_TESTFILE_COMPILE_OPTIONS})
 
     add_test(
