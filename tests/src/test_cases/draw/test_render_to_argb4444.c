@@ -13,16 +13,12 @@ void setUp(void)
 void tearDown(void)
 {
     /* Function run after every test */
+    lv_display_set_color_format(NULL, LV_COLOR_FORMAT_XRGB8888);
 }
 
 void test_render_to_argb4444(void)
 {
-    /**
-     * There is a slight color deviation between thorvg on 32-bit and 64-bit platforms.
-     * The deviation will be amplified when using lower precision color formats.
-     * Only 64-bit platforms are tested here.
-     */
-#if LV_USE_DRAW_VG_LITE && LV_USE_SNAPSHOT && !defined(NON_AMD64_BUILD)
+    lv_display_set_color_format(NULL, LV_COLOR_FORMAT_ARGB4444);
 
     lv_opa_t opa_values[2] = {0xff, 0x80};
     uint32_t opa;
@@ -36,21 +32,13 @@ void test_render_to_argb4444(void)
                 i == LV_DEMO_RENDER_SCENE_IMAGE_RECOLOR_3)) continue;
 
             lv_demo_render(i, opa_values[opa]);
-            lv_draw_buf_t * draw_buf = lv_snapshot_take(lv_screen_active(), LV_COLOR_FORMAT_ARGB4444);
-            lv_obj_t * img = lv_image_create(lv_layer_top());
-            lv_image_set_src(img, draw_buf);
 
             char buf[128];
             lv_snprintf(buf, sizeof(buf), "draw/render/argb4444/demo_render_%s_opa_%d.png",
                         lv_demo_render_get_scene_name(i), opa_values[opa]);
             TEST_ASSERT_EQUAL_SCREENSHOT(buf);
-            lv_obj_delete(img);
-            lv_draw_buf_destroy(draw_buf);
         }
     }
-#else
-    TEST_PASS();
-#endif
 }
 
 #endif

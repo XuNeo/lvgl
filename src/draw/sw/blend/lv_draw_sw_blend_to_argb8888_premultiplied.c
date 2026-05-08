@@ -37,6 +37,10 @@ typedef struct {
     static void /* LV_ATTRIBUTE_FAST_MEM */ argb8888_image_blend(lv_draw_sw_blend_image_dsc_t * dsc);
 #endif
 
+#if LV_DRAW_SW_SUPPORT_ARGB4444
+    static void /* LV_ATTRIBUTE_FAST_MEM */ argb4444_image_blend(lv_draw_sw_blend_image_dsc_t * dsc);
+#endif
+
 #if LV_DRAW_SW_SUPPORT_RGB888 || LV_DRAW_SW_SUPPORT_XRGB8888
 static void /* LV_ATTRIBUTE_FAST_MEM */ rgb888_image_blend(lv_draw_sw_blend_image_dsc_t * dsc,
                                                            const uint8_t src_px_size);
@@ -233,6 +237,11 @@ void LV_ATTRIBUTE_FAST_MEM lv_draw_sw_blend_image_to_argb8888_premultiplied(lv_d
 #if LV_DRAW_SW_SUPPORT_ARGB8888
         case LV_COLOR_FORMAT_ARGB8888:
             argb8888_image_blend(dsc);
+            break;
+#endif
+#if LV_DRAW_SW_SUPPORT_ARGB4444
+        case LV_COLOR_FORMAT_ARGB4444:
+            argb4444_image_blend(dsc);
             break;
 #endif
 
@@ -436,6 +445,180 @@ static void LV_ATTRIBUTE_FAST_MEM argb8888_image_blend(lv_draw_sw_blend_image_ds
             if(mask_buf) mask_buf += mask_stride;
             dest_buf_c32 = drawbuf_next_row(dest_buf_c32, dest_stride);
             src_buf_c32 = drawbuf_next_row(src_buf_c32, src_stride);
+        }
+    }
+}
+
+#endif
+
+#if LV_DRAW_SW_SUPPORT_ARGB4444
+
+static inline lv_color32_t LV_ATTRIBUTE_FAST_MEM lv_argb4444_to_color32(uint16_t pixel)
+{
+    lv_color32_t c;
+    c.alpha = ((pixel >> 12) & 0x0F) * 17;
+    c.red   = ((pixel >> 8) & 0x0F) * 17;
+    c.green = ((pixel >> 4) & 0x0F) * 17;
+    c.blue  = (pixel & 0x0F) * 17;
+    return c;
+}
+
+static void LV_ATTRIBUTE_FAST_MEM argb4444_image_blend(lv_draw_sw_blend_image_dsc_t * dsc)
+{
+    int32_t w = dsc->dest_w;
+    int32_t h = dsc->dest_h;
+    lv_opa_t opa = dsc->opa;
+    lv_color32_t * dest_buf_c32 = dsc->dest_buf;
+    int32_t dest_stride = dsc->dest_stride;
+    const uint16_t * src_buf_u16 = dsc->src_buf;
+    int32_t src_stride = dsc->src_stride;
+    const lv_opa_t * mask_buf = dsc->mask_buf;
+    int32_t mask_stride = dsc->mask_stride;
+
+    lv_color32_t color_argb;
+    lv_color_mix_alpha_cache_t cache;
+    lv_color_mix_with_alpha_cache_init(&cache);
+
+    int32_t x, y;
+
+    if(dsc->blend_mode == LV_BLEND_MODE_NORMAL) {
+        if(mask_buf == NULL && opa >= LV_OPA_MAX) {
+            for(y = 0; y < h; y++) {
+                for(x = 0; x < w; x++) {
+                    color_argb = lv_argb4444_to_color32(src_buf_u16[x]);
+
+                    if(color_argb.alpha >= LV_OPA_MAX) {
+                        color_argb.alpha = 0xff;
+                        dest_buf_c32[x] = color_argb;
+                    }
+                    else if(color_argb.alpha > LV_OPA_MIN) {
+                        if(dest_buf_c32[x].red != color_argb.red ||
+                           dest_buf_c32[x].green != color_argb.green ||
+                           dest_buf_c32[x].blue != color_argb.blue ||
+                           dest_buf_c32[x].alpha != color_argb.alpha) {
+
+                            color_argb.red   = (color_argb.red   * color_argb.alpha) >> 8;
+                            color_argb.green = (color_argb.green * color_argb.alpha) >> 8;
+                            color_argb.blue  = (color_argb.blue  * color_argb.alpha) >> 8;
+                            dest_buf_c32[x] = lv_color_32_32_mix_premul(color_argb, dest_buf_c32[x], &cache);
+                        }
+                    }
+                }
+                dest_buf_c32 = drawbuf_next_row(dest_buf_c32, dest_stride);
+                src_buf_u16 = drawbuf_next_row(src_buf_u16, src_stride);
+            }
+        }
+        else if(mask_buf == NULL && opa < LV_OPA_MAX) {
+            for(y = 0; y < h; y++) {
+                for(x = 0; x < w; x++) {
+                    color_argb = lv_argb4444_to_color32(src_buf_u16[x]);
+
+                    /* Apply global opacity */
+                    lv_opa_t alpha = LV_OPA_MIX2(color_argb.alpha, opa);
+
+                    if(alpha >= LV_OPA_MAX) {
+                        color_argb.alpha = 0xff;
+                        dest_buf_c32[x] = color_argb;
+                    }
+                    else if(alpha > LV_OPA_MIN) {
+                        if(dest_buf_c32[x].red != color_argb.red ||
+                           dest_buf_c32[x].green != color_argb.green ||
+                           dest_buf_c32[x].blue != color_argb.blue ||
+                           dest_buf_c32[x].alpha != color_argb.alpha) {
+                            color_argb.alpha = alpha;
+                            color_argb.red   = (color_argb.red   * color_argb.alpha) >> 8;
+                            color_argb.green = (color_argb.green * color_argb.alpha) >> 8;
+                            color_argb.blue  = (color_argb.blue  * color_argb.alpha) >> 8;
+                            dest_buf_c32[x] = lv_color_32_32_mix_premul(color_argb, dest_buf_c32[x], &cache);
+                        }
+                    }
+                }
+                dest_buf_c32 = drawbuf_next_row(dest_buf_c32, dest_stride);
+                src_buf_u16 = drawbuf_next_row(src_buf_u16, src_stride);
+            }
+        }
+        else if(mask_buf && opa >= LV_OPA_MAX) {
+            for(y = 0; y < h; y++) {
+                for(x = 0; x < w; x++) {
+                    color_argb = lv_argb4444_to_color32(src_buf_u16[x]);
+
+                    /* Apply mask opacity */
+                    lv_opa_t alpha = LV_OPA_MIX2(color_argb.alpha, mask_buf[x]);
+
+                    if(alpha >= LV_OPA_MAX) {
+                        color_argb.alpha = 0xff;
+                        dest_buf_c32[x] = color_argb;
+                    }
+                    else if(alpha > LV_OPA_MIN) {
+                        if(dest_buf_c32[x].red != color_argb.red ||
+                           dest_buf_c32[x].green != color_argb.green ||
+                           dest_buf_c32[x].blue != color_argb.blue ||
+                           dest_buf_c32[x].alpha != color_argb.alpha) {
+                            color_argb.alpha = alpha;
+                            color_argb.red   = (color_argb.red   * color_argb.alpha) >> 8;
+                            color_argb.green = (color_argb.green * color_argb.alpha) >> 8;
+                            color_argb.blue  = (color_argb.blue  * color_argb.alpha) >> 8;
+                            dest_buf_c32[x] = lv_color_32_32_mix_premul(color_argb, dest_buf_c32[x], &cache);
+                        }
+                    }
+                }
+                dest_buf_c32 = drawbuf_next_row(dest_buf_c32, dest_stride);
+                src_buf_u16 = drawbuf_next_row(src_buf_u16, src_stride);
+                mask_buf += mask_stride;
+            }
+        }
+        else if(mask_buf && opa < LV_OPA_MAX) {
+            for(y = 0; y < h; y++) {
+                for(x = 0; x < w; x++) {
+                    color_argb = lv_argb4444_to_color32(src_buf_u16[x]);
+
+                    /* Apply both mask and global opacity */
+                    lv_opa_t alpha = LV_OPA_MIX3(color_argb.alpha, opa, mask_buf[x]);
+
+                    if(alpha >= LV_OPA_MAX) {
+                        color_argb.alpha = 0xff;
+                        dest_buf_c32[x] = color_argb;
+                    }
+                    else if(alpha > LV_OPA_MIN) {
+                        if(dest_buf_c32[x].red != color_argb.red ||
+                           dest_buf_c32[x].green != color_argb.green ||
+                           dest_buf_c32[x].blue != color_argb.blue ||
+                           dest_buf_c32[x].alpha != color_argb.alpha) {
+                            color_argb.alpha = alpha;
+                            color_argb.red   = (color_argb.red   * color_argb.alpha) >> 8;
+                            color_argb.green = (color_argb.green * color_argb.alpha) >> 8;
+                            color_argb.blue  = (color_argb.blue  * color_argb.alpha) >> 8;
+                            dest_buf_c32[x] = lv_color_32_32_mix_premul(color_argb, dest_buf_c32[x], &cache);
+                        }
+                    }
+                }
+                dest_buf_c32 = drawbuf_next_row(dest_buf_c32, dest_stride);
+                src_buf_u16 = drawbuf_next_row(src_buf_u16, src_stride);
+                mask_buf += mask_stride;
+            }
+        }
+    }
+    else {
+        for(y = 0; y < h; y++) {
+            for(x = 0; x < w; x++) {
+                color_argb = lv_argb4444_to_color32(src_buf_u16[x]);
+
+                /* Apply mask and/or opacity */
+                if(mask_buf == NULL)
+                    color_argb.alpha = LV_OPA_MIX2(color_argb.alpha, opa);
+                else
+                    color_argb.alpha = LV_OPA_MIX3(color_argb.alpha, mask_buf[x], opa);
+
+                /* Premultiply alpha */
+                color_argb.red   = (color_argb.red   * color_argb.alpha) >> 8;
+                color_argb.green = (color_argb.green * color_argb.alpha) >> 8;
+                color_argb.blue  = (color_argb.blue  * color_argb.alpha) >> 8;
+
+                blend_non_normal_pixel_premultiplied(&dest_buf_c32[x], color_argb, dsc->blend_mode, &cache);
+            }
+            if(mask_buf) mask_buf += mask_stride;
+            dest_buf_c32 = drawbuf_next_row(dest_buf_c32, dest_stride);
+            src_buf_u16 = drawbuf_next_row(src_buf_u16, src_stride);
         }
     }
 }

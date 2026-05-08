@@ -57,6 +57,12 @@ static void transform_argb8888(const uint8_t * src, int32_t src_w, int32_t src_h
                                int32_t x_end, uint8_t * dest_buf, bool aa);
 #endif
 
+#if LV_DRAW_SW_SUPPORT_ARGB4444
+static void transform_argb4444(const uint8_t * src, int32_t src_w, int32_t src_h, int32_t src_stride,
+                               int32_t xs_ups, int32_t ys_ups, int32_t xs_step, int32_t ys_step,
+                               int32_t x_end, uint8_t * dest_buf, bool aa);
+#endif
+
 #if LV_DRAW_SW_SUPPORT_ARGB8888_PREMULTIPLIED
 static void transform_argb8888_premultiplied(const uint8_t * src, int32_t src_w, int32_t src_h, int32_t src_stride,
                                              int32_t xs_ups, int32_t ys_ups, int32_t xs_step, int32_t ys_step,
@@ -133,7 +139,7 @@ void lv_draw_sw_transform(const lv_area_t * dest_area, const void * src_buf,
 
     int32_t dest_stride_a8 = dest_w;
     int32_t dest_stride;
-    if(src_cf == LV_COLOR_FORMAT_RGB888) {
+    if(src_cf == LV_COLOR_FORMAT_RGB888 || src_cf == LV_COLOR_FORMAT_ARGB4444) {
         dest_stride = dest_w * lv_color_format_get_size(LV_COLOR_FORMAT_ARGB8888);
     }
     else if(src_cf == LV_COLOR_FORMAT_RGB565A8) {
@@ -265,6 +271,12 @@ void lv_draw_sw_transform(const lv_area_t * dest_area, const void * src_buf,
                 transform_argb8888_premultiplied(src_buf, src_w, src_h, src_stride, xs_ups, ys_ups, xs_step_256, ys_step_256, dest_w,
                                                  dest_buf,
                                                  aa);
+                break;
+#endif
+#if LV_DRAW_SW_SUPPORT_ARGB4444
+            case LV_COLOR_FORMAT_ARGB4444:
+                transform_argb4444(src_buf, src_w, src_h, src_stride, xs_ups, ys_ups, xs_step_256, ys_step_256, dest_w, dest_buf,
+                                   aa);
                 break;
 #endif
 #if LV_DRAW_SW_SUPPORT_RGB565 && LV_DRAW_SW_SUPPORT_RGB565A8
@@ -480,6 +492,109 @@ static void transform_argb8888(const uint8_t * src, int32_t src_w, int32_t src_h
 
             lv_color32_t px_hor = src_c32[x_next];
             lv_color32_t px_ver = *(const lv_color32_t *)((uint8_t *)src_c32 + y_next * src_stride);
+
+            if(px_ver.alpha == 0) {
+                dest_c32[x].alpha = (dest_c32[x].alpha * (0xFF - ys_fract)) >> 8;
+            }
+            else if(!lv_color32_eq(dest_c32[x], px_ver)) {
+                if(dest_c32[x].alpha) dest_c32[x].alpha = ((px_ver.alpha * ys_fract) + (dest_c32[x].alpha * (0xFF - ys_fract))) >> 8;
+                px_ver.alpha = ys_fract;
+                dest_c32[x] = lv_color_mix32(px_ver, dest_c32[x]);
+            }
+
+            if(px_hor.alpha == 0) {
+                dest_c32[x].alpha = (dest_c32[x].alpha * (0xFF - xs_fract)) >> 8;
+            }
+            else if(!lv_color32_eq(dest_c32[x], px_hor)) {
+                if(dest_c32[x].alpha) dest_c32[x].alpha = ((px_hor.alpha * xs_fract) + (dest_c32[x].alpha * (0xFF - xs_fract))) >> 8;
+                px_hor.alpha = xs_fract;
+                dest_c32[x] = lv_color_mix32(px_hor, dest_c32[x]);
+            }
+        }
+        /*Partially out of the image*/
+        else {
+            if((xs_int == 0 && x_next < 0) || (xs_int == src_w - 1 && x_next > 0))  {
+                dest_c32[x].alpha = (dest_c32[x].alpha * (0x7F - xs_fract)) >> 7;
+            }
+            else if((ys_int == 0 && y_next < 0) || (ys_int == src_h - 1 && y_next > 0))  {
+                dest_c32[x].alpha = (dest_c32[x].alpha * (0x7F - ys_fract)) >> 7;
+            }
+        }
+    }
+}
+
+#endif
+
+#if LV_DRAW_SW_SUPPORT_ARGB4444
+
+static inline lv_color32_t LV_ATTRIBUTE_FAST_MEM lv_argb4444_to_color32_transform(uint16_t pixel)
+{
+    lv_color32_t c;
+    c.alpha = ((pixel >> 12) & 0x0F) * 17;
+    c.red   = ((pixel >> 8) & 0x0F) * 17;
+    c.green = ((pixel >> 4) & 0x0F) * 17;
+    c.blue  = (pixel & 0x0F) * 17;
+    return c;
+}
+
+static void transform_argb4444(const uint8_t * src, int32_t src_w, int32_t src_h, int32_t src_stride,
+                               int32_t xs_ups, int32_t ys_ups, int32_t xs_step, int32_t ys_step,
+                               int32_t x_end, uint8_t * dest_buf, bool aa)
+{
+    int32_t xs_ups_start = xs_ups;
+    int32_t ys_ups_start = ys_ups;
+    lv_color32_t * dest_c32 = (lv_color32_t *) dest_buf;
+
+    int32_t x;
+    for(x = 0; x < x_end; x++) {
+        xs_ups = xs_ups_start + ((xs_step * x) >> 8);
+        ys_ups = ys_ups_start + ((ys_step * x) >> 8);
+
+        int32_t xs_int = xs_ups >> 8;
+        int32_t ys_int = ys_ups >> 8;
+
+        /*Fully out of the image*/
+        if(xs_int < 0 || xs_int >= src_w || ys_int < 0 || ys_int >= src_h) {
+            ((uint32_t *)dest_buf)[x] = 0x00000000;
+            continue;
+        }
+
+        /*Get the direction the hor and ver neighbor
+         *`fract` will be in range of 0x00..0xFF and `next` (+/-1) indicates the direction*/
+        int32_t xs_fract = xs_ups & 0xFF;
+        int32_t ys_fract = ys_ups & 0xFF;
+
+        int32_t x_next;
+        int32_t y_next;
+        if(xs_fract < 0x80) {
+            x_next = -1;
+            xs_fract = 0x7F - xs_fract;
+        }
+        else {
+            x_next = 1;
+            xs_fract = xs_fract - 0x80;
+        }
+        if(ys_fract < 0x80) {
+            y_next = -1;
+            ys_fract = 0x7F - ys_fract;
+        }
+        else {
+            y_next = 1;
+            ys_fract = ys_fract - 0x80;
+        }
+
+        const uint16_t * src_u16 = (const uint16_t *)(src + ys_int * src_stride + xs_int * 2);
+
+        dest_c32[x] = lv_argb4444_to_color32_transform(src_u16[0]);
+
+        if(aa &&
+           xs_int + x_next >= 0 &&
+           xs_int + x_next <= src_w - 1 &&
+           ys_int + y_next >= 0 &&
+           ys_int + y_next <= src_h - 1) {
+
+            lv_color32_t px_hor = lv_argb4444_to_color32_transform(src_u16[x_next]);
+            lv_color32_t px_ver = lv_argb4444_to_color32_transform(*(const uint16_t *)((const uint8_t *)src_u16 + y_next * src_stride));
 
             if(px_ver.alpha == 0) {
                 dest_c32[x].alpha = (dest_c32[x].alpha * (0xFF - ys_fract)) >> 8;

@@ -190,6 +190,7 @@ void test_bin_decoder_flush_cache(void)
     LV_IMAGE_DECLARE(test_RGB888_NONE_align64);
     LV_IMAGE_DECLARE(test_XRGB8888_NONE_align64);
     LV_IMAGE_DECLARE(test_ARGB8888_NONE_align64);
+    LV_IMAGE_DECLARE(test_ARGB4444_NONE_align64);
 
     const lv_image_dsc_t * img_dscs[] = {
         &test_I1_NONE_align64,
@@ -205,6 +206,7 @@ void test_bin_decoder_flush_cache(void)
         &test_RGB888_NONE_align64,
         &test_XRGB8888_NONE_align64,
         &test_ARGB8888_NONE_align64,
+        &test_ARGB4444_NONE_align64,
     };
     const lv_image_decoder_args_t args = {
         .no_cache = true,

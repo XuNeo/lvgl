@@ -236,7 +236,8 @@ lv_result_t lv_bin_decoder_open(lv_image_decoder_t * decoder, lv_image_decoder_d
                 || cf == LV_COLOR_FORMAT_RGB565     \
                 || cf == LV_COLOR_FORMAT_RGB565_SWAPPED     \
                 || cf == LV_COLOR_FORMAT_RGB565A8   \
-                || cf == LV_COLOR_FORMAT_ARGB8565) {
+                || cf == LV_COLOR_FORMAT_ARGB8565
+                || cf == LV_COLOR_FORMAT_ARGB4444) {
             res = decode_rgb(decoder, dsc);
         }
 #else
@@ -407,7 +408,8 @@ lv_result_t lv_bin_decoder_get_area(lv_image_decoder_t * decoder, lv_image_decod
                      || cf == LV_COLOR_FORMAT_RGB565    \
                      || cf == LV_COLOR_FORMAT_RGB565_SWAPPED    \
                      || cf == LV_COLOR_FORMAT_ARGB8565  \
-                     || cf == LV_COLOR_FORMAT_RGB565A8;
+                     || cf == LV_COLOR_FORMAT_RGB565A8
+                     || cf == LV_COLOR_FORMAT_ARGB4444;
     if(!supported) {
         LV_LOG_WARN("CF: %d is not supported", cf);
         return LV_RESULT_INVALID;
@@ -491,7 +493,8 @@ lv_result_t lv_bin_decoder_get_area(lv_image_decoder_t * decoder, lv_image_decod
     }
 
     if(cf == LV_COLOR_FORMAT_ARGB8888 || cf == LV_COLOR_FORMAT_XRGB8888 || cf == LV_COLOR_FORMAT_RGB888
-       || cf == LV_COLOR_FORMAT_RGB565 || cf == LV_COLOR_FORMAT_RGB565_SWAPPED || cf == LV_COLOR_FORMAT_ARGB8565) {
+       || cf == LV_COLOR_FORMAT_RGB565 || cf == LV_COLOR_FORMAT_RGB565_SWAPPED || cf == LV_COLOR_FORMAT_ARGB8565
+       || cf == LV_COLOR_FORMAT_ARGB4444) {
         uint32_t len = (w_px * bpp) / 8;
         offset += decoded_area->y1 * dsc->header.stride;
         offset += decoded_area->x1 * bpp / 8; /*Move to x1*/

@@ -485,7 +485,7 @@ static void transform_and_recolor(lv_draw_task_t * t, const lv_draw_image_dsc_t 
     bool has_colorkey = draw_dsc->colorkey != NULL;
 
     lv_color_format_t cf_final = cf;
-    if(cf_final == LV_COLOR_FORMAT_RGB888 || cf_final == LV_COLOR_FORMAT_XRGB8888) cf_final = LV_COLOR_FORMAT_ARGB8888;
+    if(cf_final == LV_COLOR_FORMAT_RGB888 || cf_final == LV_COLOR_FORMAT_XRGB8888 || cf_final == LV_COLOR_FORMAT_ARGB4444) cf_final = LV_COLOR_FORMAT_ARGB8888;
     else if(cf_final == LV_COLOR_FORMAT_RGB565 ||
             cf_final == LV_COLOR_FORMAT_RGB565_SWAPPED) cf_final = LV_COLOR_FORMAT_RGB565A8;
     else if(cf_final == LV_COLOR_FORMAT_L8) cf_final = LV_COLOR_FORMAT_AL88;
@@ -921,6 +921,50 @@ static void recolor(lv_area_t relative_area, uint8_t * src_buf, uint8_t * dest_b
                     }
                     src_buf += src_stride - w * px_size;
                 }
+            }
+        }
+    }
+    else if(cf == LV_COLOR_FORMAT_ARGB4444) {
+        uint32_t px_size = 2;
+        src_buf += src_stride * relative_area.y1 + relative_area.x1 * px_size;
+        if(mix >= LV_OPA_MAX) {
+            int32_t y;
+            for(y = 0; y < h; y++) {
+                const uint16_t * src16 = (const uint16_t *)src_buf;
+                uint16_t * dest16 = (uint16_t *)dest_buf;
+                int32_t x;
+                for(x = 0; x < w; x++) {
+                    uint16_t px = src16[x];
+                    uint8_t a4 = (px >> 12) & 0x0F;
+                    dest16[x] = (uint16_t)((a4 << 12) | ((color.red >> 4) << 8) | ((color.green >> 4) << 4) | (color.blue >> 4));
+                }
+                src_buf += src_stride;
+                dest_buf += w * px_size;
+            }
+        }
+        else {
+            uint16_t c_mult[3];
+            c_mult[0] = color.red * mix;
+            c_mult[1] = color.green * mix;
+            c_mult[2] = color.blue * mix;
+            int32_t y;
+            for(y = 0; y < h; y++) {
+                const uint16_t * src16 = (const uint16_t *)src_buf;
+                uint16_t * dest16 = (uint16_t *)dest_buf;
+                int32_t x;
+                for(x = 0; x < w; x++) {
+                    uint16_t px = src16[x];
+                    uint8_t a4 = (px >> 12) & 0x0F;
+                    uint8_t r8 = ((px >> 8) & 0x0F) * 17;
+                    uint8_t g8 = ((px >> 4) & 0x0F) * 17;
+                    uint8_t b8 = (px & 0x0F) * 17;
+                    r8 = (c_mult[0] + (r8 * mix_inv)) >> 8;
+                    g8 = (c_mult[1] + (g8 * mix_inv)) >> 8;
+                    b8 = (c_mult[2] + (b8 * mix_inv)) >> 8;
+                    dest16[x] = (uint16_t)((a4 << 12) | ((r8 >> 4) << 8) | ((g8 >> 4) << 4) | (b8 >> 4));
+                }
+                src_buf += src_stride;
+                dest_buf += w * px_size;
             }
         }
     }

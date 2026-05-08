@@ -36,6 +36,7 @@ void test_draw_buf_stride_adjust(void)
 #endif
         "RGB888",
         "ARGB8888",
+        "ARGB4444",
         "XRGB8888",
     };
 

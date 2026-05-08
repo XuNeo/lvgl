@@ -276,6 +276,11 @@ menu "LVGL configuration"
 			default y
 			depends on LV_USE_DRAW_SW
 
+		config LV_DRAW_SW_SUPPORT_ARGB4444
+			bool "Enable support for ARGB4444 color format"
+			default y
+			depends on LV_USE_DRAW_SW
+
 		config LV_DRAW_SW_SUPPORT_L8
 			bool "Enable support for L8 color format"
 			default y

@@ -541,6 +541,7 @@ static void create_test_images(int32_t radius, int32_t scale, int32_t angle)
     LV_IMAGE_DECLARE(test_RGB888_NONE_align64);
     LV_IMAGE_DECLARE(test_XRGB8888_NONE_align64);
     LV_IMAGE_DECLARE(test_ARGB8888_NONE_align64);
+    LV_IMAGE_DECLARE(test_ARGB4444_NONE_align64);
 
     const lv_image_dsc_t * img_dscs[] = {
         &test_I1_NONE_align64,
@@ -556,6 +557,7 @@ static void create_test_images(int32_t radius, int32_t scale, int32_t angle)
         &test_RGB888_NONE_align64,
         &test_XRGB8888_NONE_align64,
         &test_ARGB8888_NONE_align64,
+        &test_ARGB4444_NONE_align64,
     };
     const char * names[] = {
         "I1",
@@ -571,6 +573,7 @@ static void create_test_images(int32_t radius, int32_t scale, int32_t angle)
         "RGB888",
         "XRGB8888",
         "ARGB8888",
+        "ARGB4444",
     };
 
     lv_obj_clean(lv_screen_active());

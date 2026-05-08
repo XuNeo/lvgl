@@ -19,6 +19,7 @@ static const char * color_formats[] = {
     "RGB888", /*15 RGB888*/
     "XRGB8888", /*17 XRGB8888*/
     "ARGB8888", /*16 ARGB8888*/
+    "ARGB4444",
 };
 
 static const char * compressions[] = {
@@ -54,6 +55,7 @@ LV_IMAGE_DECLARE(test_RGB565_NONE_align1);
 LV_IMAGE_DECLARE(test_RGB888_NONE_align1);
 LV_IMAGE_DECLARE(test_XRGB8888_NONE_align1);
 LV_IMAGE_DECLARE(test_ARGB8888_NONE_align1);
+LV_IMAGE_DECLARE(test_ARGB4444_NONE_align1);
 LV_IMAGE_DECLARE(test_I1_RLE_align1);
 LV_IMAGE_DECLARE(test_I2_RLE_align1);
 LV_IMAGE_DECLARE(test_I4_RLE_align1);
@@ -67,6 +69,7 @@ LV_IMAGE_DECLARE(test_RGB565_RLE_align1);
 LV_IMAGE_DECLARE(test_RGB888_RLE_align1);
 LV_IMAGE_DECLARE(test_XRGB8888_RLE_align1);
 LV_IMAGE_DECLARE(test_ARGB8888_RLE_align1);
+LV_IMAGE_DECLARE(test_ARGB4444_RLE_align1);
 
 LV_IMAGE_DECLARE(test_I1_LZ4_align1);
 LV_IMAGE_DECLARE(test_I2_LZ4_align1);
@@ -81,6 +84,7 @@ LV_IMAGE_DECLARE(test_RGB565_LZ4_align1);
 LV_IMAGE_DECLARE(test_RGB888_LZ4_align1);
 LV_IMAGE_DECLARE(test_XRGB8888_LZ4_align1);
 LV_IMAGE_DECLARE(test_ARGB8888_LZ4_align1);
+LV_IMAGE_DECLARE(test_ARGB4444_LZ4_align1);
 
 LV_IMAGE_DECLARE(test_I1_NONE_align64);
 LV_IMAGE_DECLARE(test_I2_NONE_align64);
@@ -95,6 +99,7 @@ LV_IMAGE_DECLARE(test_RGB565_NONE_align64);
 LV_IMAGE_DECLARE(test_RGB888_NONE_align64);
 LV_IMAGE_DECLARE(test_XRGB8888_NONE_align64);
 LV_IMAGE_DECLARE(test_ARGB8888_NONE_align64);
+LV_IMAGE_DECLARE(test_ARGB4444_NONE_align64);
 
 LV_IMAGE_DECLARE(test_I1_RLE_align64);
 LV_IMAGE_DECLARE(test_I2_RLE_align64);
@@ -109,6 +114,7 @@ LV_IMAGE_DECLARE(test_RGB565_RLE_align64);
 LV_IMAGE_DECLARE(test_RGB888_RLE_align64);
 LV_IMAGE_DECLARE(test_XRGB8888_RLE_align64);
 LV_IMAGE_DECLARE(test_ARGB8888_RLE_align64);
+LV_IMAGE_DECLARE(test_ARGB4444_RLE_align64);
 
 LV_IMAGE_DECLARE(test_I1_LZ4_align64);
 LV_IMAGE_DECLARE(test_I2_LZ4_align64);
@@ -123,6 +129,7 @@ LV_IMAGE_DECLARE(test_RGB565_LZ4_align64);
 LV_IMAGE_DECLARE(test_RGB888_LZ4_align64);
 LV_IMAGE_DECLARE(test_XRGB8888_LZ4_align64);
 LV_IMAGE_DECLARE(test_ARGB8888_LZ4_align64);
+LV_IMAGE_DECLARE(test_ARGB4444_LZ4_align64);
 
 static const void * c_array_images[sizeof(stride_align)][sizeof(compressions)][sizeof(color_formats)] = {
     {
@@ -140,6 +147,7 @@ static const void * c_array_images[sizeof(stride_align)][sizeof(compressions)][s
             &test_RGB888_NONE_align1,
             &test_XRGB8888_NONE_align1,
             &test_ARGB8888_NONE_align1,
+            &test_ARGB4444_NONE_align1,
         },
         {
             &test_I1_RLE_align1,
@@ -155,6 +163,7 @@ static const void * c_array_images[sizeof(stride_align)][sizeof(compressions)][s
             &test_RGB888_RLE_align1,
             &test_XRGB8888_RLE_align1,
             &test_ARGB8888_RLE_align1,
+            &test_ARGB4444_RLE_align1,
         },
         {
             &test_I1_LZ4_align1,
@@ -170,6 +179,7 @@ static const void * c_array_images[sizeof(stride_align)][sizeof(compressions)][s
             &test_RGB888_LZ4_align1,
             &test_XRGB8888_LZ4_align1,
             &test_ARGB8888_LZ4_align1,
+            &test_ARGB4444_LZ4_align1,
         }
     },
     {
@@ -187,6 +197,7 @@ static const void * c_array_images[sizeof(stride_align)][sizeof(compressions)][s
             &test_RGB888_NONE_align64,
             &test_XRGB8888_NONE_align64,
             &test_ARGB8888_NONE_align64,
+            &test_ARGB4444_NONE_align64,
         },
         {
             &test_I1_RLE_align64,
@@ -202,6 +213,7 @@ static const void * c_array_images[sizeof(stride_align)][sizeof(compressions)][s
             &test_RGB888_RLE_align64,
             &test_XRGB8888_RLE_align64,
             &test_ARGB8888_RLE_align64,
+            &test_ARGB4444_RLE_align64,
         },
         {
             &test_I1_LZ4_align64,
@@ -217,6 +229,7 @@ static const void * c_array_images[sizeof(stride_align)][sizeof(compressions)][s
             &test_RGB888_LZ4_align64,
             &test_XRGB8888_LZ4_align64,
             &test_ARGB8888_LZ4_align64,
+            &test_ARGB4444_LZ4_align64,
         }
     }
 };
